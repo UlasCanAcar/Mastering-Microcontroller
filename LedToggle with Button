@@ -1,0 +1,66 @@
+/*
+ * 003LEDToggleIT.c
+ *
+ *  Created on: 5 Oct 2020
+ *      Author: templ
+ */
+
+
+#include "stm32f446xx.h"
+
+#define LOW           0
+#define Btn_Pressed   LOW
+
+
+void delay(void)
+{
+
+	for(uint32_t i = 0; i < 500000/2; i++);
+
+}
+
+
+int main(void)
+{
+    //this is configuration for LED
+	GPIO_Handle_t GpioLed,  GPIObtn;
+
+	GpioLed.pGPIOx = GPIOA;
+	GpioLed.GPIO_PinConfig.GPIO_PinNumber      = GPIO_PIN_NO_8;
+	GpioLed.GPIO_PinConfig.GPIO_PinMode        = GPIO_MODE_OUTPUT;
+	GpioLed.GPIO_PinConfig.GPIO_PinSpeed       = GPIO_SPEED_FAST;
+	GpioLed.GPIO_PinConfig.GPIO_PinOPType      = GPIO_OP_TYPE_PP;
+	GpioLed.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_NO_PUPD;
+
+	GPIO_PeriClockControl(GPIOA, ENABLE);
+
+	GPIO_Init(&GpioLed);
+
+    //this is configuration for BUTTON
+	    GPIObtn.pGPIOx = GPIOB;
+	    GPIObtn.GPIO_PinConfig.GPIO_PinNumber      = GPIO_PIN_NO_12;
+	    GPIObtn.GPIO_PinConfig.GPIO_PinMode        = GPIO_MODE_INPUT;
+	    GPIObtn.GPIO_PinConfig.GPIO_PinSpeed       = GPIO_SPEED_FAST;
+	    GPIObtn.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PIN_PU;
+
+		GPIO_PeriClockControl(GPIOB, ENABLE);
+
+		GPIO_Init(&GPIObtn);
+
+	while(1)
+	{
+
+        if(GPIO_ReadFromInputPin(GPIOB, GPIO_PIN_NO_12) == Btn_Pressed)
+        {
+        	delay();
+		GPIO_ToggleOutputPin(GPIOA, GPIO_PIN_NO_8);
+        }
+
+	}
+
+
+
+
+
+	return 0;
+}
