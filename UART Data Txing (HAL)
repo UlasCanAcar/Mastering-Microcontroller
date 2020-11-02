@@ -1,0 +1,73 @@
+/*
+ * main.c
+ *
+ *  Created on: 25 Oct 2020
+ *      Author: templ
+ */
+
+#include  "stm32f4xx_hal.h"
+#include  "main.h"
+#include  <string.h>
+
+void SystemClockConfig(void);
+void UART2_Init(void);
+void Error_Handler(void);
+
+UART_HandleTypeDef huart2;
+
+char *user_data = "the application is running\r\n";
+
+int main()
+{
+
+   //the very first invoked has to be HALinit
+   HAL_Init();
+   //it is not defined in cube HAL layer it is application specific
+   SystemClockConfig();
+
+   UART2_Init();
+
+   uint16_t Len_of_data = strlen(user_data);
+   HAL_UART_Transmit(&huart2,(uint8_t*)user_data, Len_of_data, HAL_MAX_DELAY);
+
+  
+   while(1);
+
+
+	return 0;
+}
+
+void SystemClockConfig(void)
+{
+	//use only if you need specific clock settings
+	//by default MCU will run on internal RC Osillator
+
+}
+
+
+void UART2_Init()
+{
+	huart2.Instance = USART2;
+	huart2.Init.BaudRate = 115200;
+	huart2.Init.WordLength = UART_WORDLENGTH_8B;
+	huart2.Init.StopBits = UART_STOPBITS_1;
+	huart2.Init.Parity = UART_PARITY_NONE;
+	huart2.Init.HwFlowCtl =UART_HWCONTROL_NONE;
+	huart2.Init.Mode = UART_MODE_TX_RX;
+	if( HAL_UART_Init(&huart2) != HAL_OK)
+	{
+
+		//there is a problem
+		Error_Handler();
+
+	}
+
+
+}
+
+
+void Error_Handler(void)
+{
+
+	while(1);
+}
